@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List - School Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">
+            <div class="logo-icon"><i class="fa-solid fa-user-graduate"></i></div>
+            School MS
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="register.html">Register Student</a></li>
+            <li><a href="students.html" class="active">Student List</a></li>
+        </ul>
+        <div class="user-info">
+            <div class="user-avatar">A</div>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Student List</h1>
+            <p>View and manage all registered students.</p>
+        </div>
+
+        <div class="table-card">
+            <div class="table-header">
+                <h2>All Students (<span id="studentCount">0</span>)</h2>
+                <input type="text" class="search-box" id="searchInput"
+                       placeholder="Search by name, email, or class...">
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Class</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon"><i class="fa-solid fa-user-xmark"></i></div>
+                <h3>No students found</h3>
+                <p>Try adjusting your search or register a new student.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/students.js"></script>
+    <script>
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = 'index.html';
+        } else {
+            initStudentList();
+        }
+    </script>
+</body>
+</html>
