@@ -36,18 +36,24 @@
             </form>
 
             <div class="demo-credentials">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
-                    <div>
-                        <strong>Demo Credentials:</strong><br>
-                        Email: admin@school.edu<br>
-                        Password: admin123
-                    </div>
+                <strong>Demo Credentials</strong>
+                <div class="demo-row">
+                    <div>Admin: admin@school.edu / admin123</div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemo('admin')">Use</button>
+                </div>
+                <div class="demo-row">
+                    <div>Teacher: teacher@school.edu / teacher123</div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemo('teacher')">Use</button>
+                </div>
+                <div class="demo-row" style="justify-content:flex-end;">
                     <button type="button" class="btn btn-secondary btn-sm" onclick="resetDemo()">Reset Demo</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>try{var t=localStorage.getItem('sms_theme');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));}catch(e){}</script>
+    <script src="js/data.js"></script>
     <script src="js/auth.js"></script>
 </body>
 </html>

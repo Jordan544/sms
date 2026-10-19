@@ -6,92 +6,32 @@
     <title>Dashboard - School Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script>try{var t=localStorage.getItem('sms_theme');if(t)document.documentElement.setAttribute('data-theme',JSON.parse(t));}catch(e){}</script>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="dashboard.html" class="navbar-brand">
-            <div class="logo-icon"><i class="fa-solid fa-user-graduate"></i></div>
-            School MS
-        </a>
-        <ul class="navbar-nav">
-            <li><a href="dashboard.html" class="active">Dashboard</a></li>
-            <li><a href="register.html">Register Student</a></li>
-            <li><a href="students.html">Student List</a></li>
-        </ul>
-        <div class="user-info">
-            <div class="user-avatar">A</div>
-            <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
-        </div>
-    </nav>
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="brand"><i class="fa-solid fa-graduation-cap"></i> School MS</div>
+            <nav id="nav"></nav>
+        </aside>
 
-    <div class="container">
-        <div class="page-header">
-            <h1>Dashboard</h1>
-            <p>Welcome back, Administrator. Here's an overview of the school.</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon blue"><i class="fa-solid fa-circle-user"></i></div>
-                <div class="stat-info">
-                    <h3 id="totalStudents">0</h3>
-                    <p>Total Students</p>
+        <div class="content">
+            <header class="topbar">
+                <h2 id="pageTitle">Dashboard</h2>
+                <div class="user-box">
+                    <button class="btn btn-secondary btn-sm" id="themeBtn" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+                    <div class="user-meta">
+                        <strong id="userName"></strong><br>
+                        <span class="role-badge" id="userRole"></span>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
-                <div class="stat-info">
-                    <h3 id="activeStudents">0</h3>
-                    <p>Active Students</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon orange"><i class="fa-solid fa-book-journal-whills"></i></div>
-                <div class="stat-info">
-                    <h3 id="totalClasses">0</h3>
-                    <p>Classes</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon red"><i class="fa-solid fa-file"></i></div>
-                <div class="stat-info">
-                    <h3 id="newThisMonth">0</h3>
-                    <p>New This Month</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="quick-actions">
-            <h2>Quick Actions</h2>
-            <div class="actions-grid">
-                <a href="register.html" class="action-card">
-                    <span class="action-icon"><i class="fa-solid fa-plus"></i></span>
-                    <span>Register New Student</span>
-                </a>
-                <a href="students.html" class="action-card">
-                    <span class="action-icon"><i class="fa-solid fa-list"></i></span>
-                    <span>View Student List</span>
-                </a>
-            </div>
-        </div>
-
-        <div class="recent-section">
-            <h2>Recent Activity</h2>
-            <ul class="activity-list" id="activityList">
-                <!-- Populated by JavaScript -->
-            </ul>
+            </header>
+            <main id="view"></main>
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/students.js"></script>
-    <script src="js/main.js"></script>
-    <script>
-        if (!localStorage.getItem('currentUser')) {
-            window.location.href = 'index.html';
-        } else {
-            loadDashboard();
-        }
-    </script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
