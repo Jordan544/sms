@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Student - School Management System</title>
+    <title>Register Student - EDUManage SMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -11,7 +11,7 @@
     <nav class="navbar">
         <a href="dashboard.html" class="navbar-brand">
             <div class="logo-icon"><i class="fa-solid fa-user-graduate"></i></div>
-            School MS
+            EDUManage SMS
         </a>
         <ul class="navbar-nav">
             <li><a href="dashboard.html">Dashboard</a></li>
@@ -30,9 +30,8 @@
             <p>Fill in the details below to register a new student.</p>
         </div>
 
-        <div id="formAlert" class="alert alert-success"></div>
-
         <div class="form-card">
+            <div id="formAlert" class="alert"></div>
             <form id="studentForm" novalidate>
                 <div class="form-row">
                     <div class="form-group">
@@ -105,7 +104,7 @@
                               placeholder="Enter residential address"></textarea>
                 </div>
 
-                <div class="form-actions">
+                <div class="form-actions" style="display: flex; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--light-gray);">
                     <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Register Student</button>
                     <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
                 </div>
