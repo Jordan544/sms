@@ -68,6 +68,46 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .error-message.show { display: block; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
 
+/* ---------- Professional Multi-Select Grid ---------- */
+.selection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.selection-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.selection-card:hover {
+    border-color: var(--primary);
+    background: var(--surface);
+}
+
+.selection-card input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .selection-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 .alert { display: none; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: .9rem; }
 .alert.show { display: block; }
 .alert-error { background: #fee2e2; color: #991b1b; }

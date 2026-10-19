@@ -95,7 +95,7 @@ function download(filename, text, mime) {
 }
 function csvCell(v) {
     let s = String(v == null ? '' : v);
-    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; // stop spreadsheet formula injection
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; 
     return '"' + s.replace(/"/g, '""') + '"';
 }
 function toCSV(headers, rows) {
@@ -289,13 +289,17 @@ function teachers() {
             <div class="card-head"><h3>Teacher accounts</h3>
                 <button class="btn btn-primary" id="addT"><i class="fa-solid fa-plus"></i> Add Teacher</button></div>
             <div class="table-wrap"><table>
-                <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Class</th><th>Actions</th></tr></thead>
-                <tbody>${list.length ? list.map(t => `<tr>
-                    <td><strong>${esc(t.name)}</strong></td><td>${esc(t.email)}</td><td>${esc(t.subject)}</td><td>${esc(t.className)}</td>
-                    <td><div class="actions">
-                        <button class="btn-icon" data-act="edit" data-id="${esc(t.id)}"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-icon danger" data-act="del" data-id="${esc(t.id)}"><i class="fa-solid fa-trash"></i></button>
-                    </div></td></tr>`).join('') : '<tr><td colspan="5" class="empty">No teachers yet.</td></tr>'}</tbody>
+                <thead><tr><th>Name</th><th>Email</th><th>Subjects</th><th>Classes</th><th>Actions</th></tr></thead>
+                <tbody>${list.length ? list.map(t => {
+                    const subs = Array.isArray(t.subjects) ? t.subjects.join(', ') : (t.subject || 'None');
+                    const clss = Array.isArray(t.classes) ? t.classes.join(', ') : (t.className || 'None');
+                    return `<tr>
+                        <td><strong>${esc(t.name)}</strong></td><td>${esc(t.email)}</td><td>${esc(subs)}</td><td>${esc(clss)}</td>
+                        <td><div class="actions">
+                            <button class="btn-icon" data-act="edit" data-id="${esc(t.id)}"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-icon danger" data-act="del" data-id="${esc(t.id)}"><i class="fa-solid fa-trash"></i></button>
+                        </div></td></tr>`;
+                }).join('') : '<tr><td colspan="5" class="empty">No teachers yet.</td></tr>'}</tbody>
             </table></div></div>`;
     $('#addT').onclick = () => teacherForm();
     $('#view').querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
@@ -311,29 +315,78 @@ function teachers() {
 
 function teacherForm(t) {
     const editing = !!t;
-    t = t || { name: '', email: '', password: '', subject: SUBJECTS[0], className: CLASSES[0] };
+    t = t || { name: '', email: '', password: '', subjects: [SUBJECTS[0]], classes: [CLASSES[0]] };
+    const currentSubjects = Array.isArray(t.subjects) ? t.subjects : (t.subject ? [t.subject] : []);
+    const currentClasses = Array.isArray(t.classes) ? t.classes : (t.className ? [t.className] : []);
+
     openModal(editing ? 'Edit teacher' : 'Add teacher', `
         <div class="form-grid">
-            ${field('Full name', 'name', t.name)}${field('Email (login)', 'email', t.email, { type: 'email' })}
-            ${field('Subject', 'subject', t.subject, { options: SUBJECTS })}${field('Class', 'className', t.className, { options: CLASSES })}
+            ${field('Full name', 'name', t.name)}
+            ${field('Email (login)', 'email', t.email, { type: 'email' })}
+        </div>
+        <div class="form-group">
+            <label>Subjects (Select all that apply)</label>
+            <div class="selection-grid">
+                ${SUBJECTS.map(sub => `
+                    <label class="selection-card">
+                        <input type="checkbox" name="subjects" value="${esc(sub)}" ${currentSubjects.includes(sub) ? 'checked' : ''}> 
+                        <span>${esc(sub)}</span>
+                    </label>
+                `).join('')}
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Classes (Select all that apply)</label>
+            <div class="selection-grid">
+                ${CLASSES.map(cls => `
+                    <label class="selection-card">
+                        <input type="checkbox" name="classes" value="${esc(cls)}" ${currentClasses.includes(cls) ? 'checked' : ''}> 
+                        <span>${esc(cls)}</span>
+                    </label>
+                `).join('')}
+            </div>
+        </div>
+        <div class="form-group">
             ${field(editing ? 'New password (leave blank to keep)' : 'Password', 'password', '', { type: 'password' })}
-        </div><div class="alert alert-error" id="formErr"></div>`, {
+        </div>
+        <div class="alert alert-error" id="formErr"></div>`, {
         onSubmit(fd) {
             const d = Object.fromEntries(fd);
-            d.name = d.name.trim();
-            d.email = d.email.trim().toLowerCase();
+            d.name = (d.name || '').trim();
+            d.email = (d.email || '').trim().toLowerCase();
+            
+            const selectedSubjects = Array.from(document.querySelectorAll('input[name="subjects"]:checked')).map(cb => cb.value);
+            const selectedClasses = Array.from(document.querySelectorAll('input[name="classes"]:checked')).map(cb => cb.value);
+
             const users = getUsers();
             const err = !d.name ? 'Name is required.' :
                 !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) ? 'Enter a valid email address.' :
                 users.some(u => u.email.toLowerCase() === d.email && u.id !== (t.id || '')) ? 'That email is already in use.' :
                 (!editing && d.password.length < 6) || (d.password && d.password.length < 6) ? 'Password must be at least 6 characters.' : '';
+            
             if (err) { $('#formErr').textContent = err; $('#formErr').classList.add('show'); return; }
+            
             if (editing) {
                 const u = users.find(x => x.id === t.id);
-                Object.assign(u, { name: d.name, email: d.email, subject: d.subject, className: d.className });
+                Object.assign(u, { 
+                    name: d.name, 
+                    email: d.email, 
+                    subjects: selectedSubjects, 
+                    classes: selectedClasses,
+                    subject: undefined, 
+                    className: undefined 
+                });
                 if (d.password) u.password = d.password;
             } else {
-                users.push({ id: DB.uid(), role: 'teacher', ...d });
+                users.push({ 
+                    id: DB.uid(), 
+                    role: 'teacher', 
+                    name: d.name, 
+                    email: d.email, 
+                    password: d.password, 
+                    subjects: selectedSubjects, 
+                    classes: selectedClasses 
+                });
             }
             DB.set('users', users);
             closeModal();
@@ -349,7 +402,8 @@ const aState = { date: today(), cls: '' };
 function attendance() {
     if (!aState.cls) {
         const me = getUsers().find(u => u.id === session.id);
-        aState.cls = (me && me.className) || CLASSES[0];
+        const allowedClasses = me && me.classes ? me.classes : (me && me.className ? [me.className] : CLASSES);
+        aState.cls = allowedClasses[0] || CLASSES[0];
     }
     $('#view').innerHTML = `
         <div class="card">
@@ -418,8 +472,14 @@ const gState = { cls: '', subject: '', term: TERMS[0] };
 
 function grades() {
     const me = getUsers().find(u => u.id === session.id) || {};
-    if (!gState.cls) gState.cls = me.className || CLASSES[0];
-    if (!gState.subject) gState.subject = me.subject || SUBJECTS[0];
+    if (!gState.cls) {
+        const allowedClasses = me.classes || (me.className ? [me.className] : CLASSES);
+        gState.cls = allowedClasses[0] || CLASSES[0];
+    }
+    if (!gState.subject) {
+        const allowedSubjects = me.subjects || (me.subject ? [me.subject] : SUBJECTS);
+        gState.subject = allowedSubjects[0] || SUBJECTS[0];
+    }
     $('#view').innerHTML = `
         <div class="card">
             <div class="card-head"><h3>Enter grades</h3>
@@ -532,7 +592,6 @@ function announcements() {
                 : '<p class="empty">No announcements yet.</p>'}
         </div>`;
     
-    // Only bind creation dialog handler if the user is an admin
     if (isAdmin) {
         $('#addAn').onclick = () => openModal('New announcement', `
             ${field('Title', 'title', '')}
