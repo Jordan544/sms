@@ -143,7 +143,7 @@ function dashboard() {
         <div class="two-col">
             <div class="card"><h3>Students per class</h3>
                 ${counts.map(([c, n]) => `<div class="bar-row"><span>${esc(c)}</span>
-                    <div class="bar-track"><div class="bar-fill" style="width:${n / max * 100}%"></div></div><strong>${n}</strong></div>`).join('')}
+                    <div class="bar-track"><div class="bar-fill" style="width:${n / max * 100}\%"></div></div><strong>${n}</strong></div>`).join('')}
             </div>
             <div class="card"><h3>Latest announcements</h3>
                 ${latest.length ? latest.map(announcementHtml).join('') : '<p class="empty">No announcements yet.</p>'}
@@ -527,32 +527,36 @@ function announcements() {
     $('#view').innerHTML = `
         <div class="card">
             <div class="card-head"><h3>Announcements</h3>
-                <button class="btn btn-primary" id="addAn"><i class="fa-solid fa-plus"></i> New Announcement</button></div>
-            ${list.length ? list.map(a => `<div>${announcementHtml(a)}
-                ${(isAdmin || a.author === session.name) ? `<div style="margin:-6px 0 14px;text-align:right"><button class="btn btn-secondary btn-sm" data-del="${esc(a.id)}"><i class="fa-solid fa-trash"></i> Delete</button></div>` : ''}</div>`).join('')
+                ${isAdmin ? '<button class="btn btn-primary" id="addAn"><i class="fa-solid fa-plus"></i> New Announcement</button>' : ''}</div>
+            ${list.length ? list.map(a => `<div>${announcementHtml(a)}${(isAdmin || a.author === session.name) ? `<div style="margin:-6px 0 14px;text-align:right"><button class="btn btn-secondary btn-sm" data-del="${esc(a.id)}"><i class="fa-solid fa-trash"></i> Delete</button></div>` : ''}</div>`).join('')
                 : '<p class="empty">No announcements yet.</p>'}
         </div>`;
-    $('#addAn').onclick = () => openModal('New announcement', `
-        ${field('Title', 'title', '')}
-        ${field('Priority', 'priority', 'Normal', { options: ['Normal', 'Urgent'] })}
-        ${field('Message', 'message', '', { textarea: true })}
-        <div class="alert alert-error" id="formErr"></div>`, {
-        submitLabel: 'Post',
-        onSubmit(fd) {
-            const d = Object.fromEntries(fd);
-            if (!d.title.trim() || !d.message.trim()) {
-                $('#formErr').textContent = 'Title and message are required.';
-                $('#formErr').classList.add('show');
-                return;
+    
+    // Only bind creation dialog handler if the user is an admin
+    if (isAdmin) {
+        $('#addAn').onclick = () => openModal('New announcement', `
+            ${field('Title', 'title', '')}
+            ${field('Priority', 'priority', 'Normal', { options: ['Normal', 'Urgent'] })}
+            ${field('Message', 'message', '', { textarea: true })}
+            <div class="alert alert-error" id="formErr"></div>`, {
+            submitLabel: 'Post',
+            onSubmit(fd) {
+                const d = Object.fromEntries(fd);
+                if (!d.title.trim() || !d.message.trim()) {
+                    $('#formErr').textContent = 'Title and message are required.';
+                    $('#formErr').classList.add('show');
+                    return;
+                }
+                const all = DB.get('announcements', []);
+                all.unshift({ id: DB.uid(), title: d.title.trim(), message: d.message.trim(), priority: d.priority, author: session.name, date: today() });
+                DB.set('announcements', all);
+                closeModal();
+                toast('Announcement posted.');
+                announcements();
             }
-            const all = DB.get('announcements', []);
-            all.unshift({ id: DB.uid(), title: d.title.trim(), message: d.message.trim(), priority: d.priority, author: session.name, date: today() });
-            DB.set('announcements', all);
-            closeModal();
-            toast('Announcement posted.');
-            announcements();
-        }
-    });
+        });
+    }
+
     $('#view').querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
         if (!confirm('Delete this announcement?')) return;
         DB.set('announcements', DB.get('announcements', []).filter(a => a.id !== b.dataset.del));

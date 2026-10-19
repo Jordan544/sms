@@ -47,12 +47,22 @@ function seedData() {
 
     const names = [
         ['Amina Nakato', 'Female', 'Senior 1'], ['Brian Okello', 'Male', 'Senior 1'],
-        ['Cynthia Achieng', 'Female', 'Senior 2'], ['David Kato', 'Male', 'Senior 2'],
-        ['Esther Namukasa', 'Female', 'Senior 3'], ['Felix Mugisha', 'Male', 'Senior 3'],
-        ['Grace Atim', 'Female', 'Senior 3'], ['Henry Ssebunya', 'Male', 'Senior 4'],
-        ['Irene Auma', 'Female', 'Senior 4'], ['Joel Tumusiime', 'Male', 'Senior 5'],
-        ['Kevin Opio', 'Male', 'Senior 5'], ['Lydia Nabirye', 'Female', 'Senior 6']
+        ['Cynthia Achieng', 'Female', 'Senior 1'], ['Daniel Kato', 'Male', 'Senior 1'],
+        ['Esther Namukasa', 'Female', 'Senior 2'], ['Felix Mugisha', 'Male', 'Senior 2'],
+        ['Grace Atim', 'Female', 'Senior 2'], ['Hassan Mukasa', 'Male', 'Senior 2'],
+        ['Irene Auma', 'Female', 'Senior 3'], ['Joel Tumusiime', 'Male', 'Senior 3'],
+        ['Kevin Opio', 'Male', 'Senior 3'], ['Lydia Nabirye', 'Female', 'Senior 3'],
+        ['Mark Kigozi', 'Male', 'Senior 4'], ['Natalie Nassozi', 'Female', 'Senior 4'],
+        ['Oscar Mwesigwa', 'Male', 'Senior 4'], ['Patricia Akello', 'Female', 'Senior 4'],
+        ['Quentin Wante', 'Male', 'Senior 5'], ['Rachel Nambatya', 'Female', 'Senior 5'],
+        ['Samuel Ssemwanga', 'Male', 'Senior 5'], ['Tricia Kemigisha', 'Female', 'Senior 5'],
+        ['Umaru Mayanja', 'Male', 'Senior 6'], ['Vivian Kiconco', 'Female', 'Senior 6'],
+        ['Walter Bwire', 'Male', 'Senior 6'], ['Xavier Mpiima', 'Female', 'Senior 6'],
+        ['Yvette Nanyonjo', 'Female', 'Senior 1'], ['Zachary Lubega', 'Male', 'Senior 3'],
+        ['Bridget Nanteza', 'Female', 'Senior 4'], ['Elijah Ssenyonga', 'Male', 'Senior 5'],
+        ['Daphine Namazzi', 'Female', 'Senior 6'], ['Ronnie Mwebaze', 'Male', 'Senior 2']
     ];
+    
     DB.set('students', names.map((n, i) => ({
         id: 'S' + String(1001 + i),
         name: n[0],
